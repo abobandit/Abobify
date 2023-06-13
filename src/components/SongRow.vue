@@ -1,6 +1,6 @@
 <script setup>
 import { ref, toRefs, onMounted } from 'vue'
-import Heart from 'vue-material-design-icons/Heart.vue';
+// import Heart from '@/components/Heart'
 import Play from 'vue-material-design-icons/Play.vue';
 import Pause from 'vue-material-design-icons/Pause.vue';
 
@@ -55,13 +55,13 @@ onMounted(() => {
                 <Pause v-else fillColor="#FFFFFF" :size="25" @click="useSong.playOrPauseSong()"/>
             </div>
             <div v-else class="text-white font-semibold w-[40px] ml-5">
-                <span :class="{'text-green-500': currentTrack && currentTrack.name === track.name}">
+                <span :class="{'text-blue-400': currentTrack && currentTrack.name === track.name}">
                     {{ index }}
                 </span>
             </div>
             <div>
                 <div
-                    :class="{'text-green-500': currentTrack && currentTrack.name === track.name}"
+                    :class="{'text-blue-400': currentTrack && currentTrack.name === track.name}"
                     class="text-white font-semibold"
                 >
                     {{ track.name }}
@@ -71,7 +71,7 @@ onMounted(() => {
         </div>
         <div class="flex items-center">
             <button type="button" v-if="isHover">
-                <Heart fillColor="#1BD760" :size="22"/>
+                <Heart fillColor="#60a6fa" :size="22"/>
             </button>
             <div
                 v-if="isTrackTime"

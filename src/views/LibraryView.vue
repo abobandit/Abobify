@@ -3,7 +3,6 @@ import SongRow from '../components/SongRow.vue'
 import Play from 'vue-material-design-icons/Play.vue';
 import Pause from 'vue-material-design-icons/Pause.vue';
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue';
-import Heart from 'vue-material-design-icons/Heart.vue';
 import ClockTimeThreeOutline from 'vue-material-design-icons/ClockTimeThreeOutline.vue';
 import artist from '../artist.json'
 
@@ -61,7 +60,7 @@ const playFunc = () => {
                         <Pause v-else fillColor="#181818" :size="25"/>
                     </button>
                     <button type="button">
-                        <Heart fillColor="#1BD760" :size="30"/>
+<!--                        <Heart fillColor="#37D4D7" :size="30"/>-->
                     </button>
                     <button type="button">
                         <DotsHorizontal fillColor="#FFFFFF" :size="25"/>
@@ -80,7 +79,7 @@ const playFunc = () => {
         </div>
         <div class="border-b border-b-[#2A2A2A] mt-2"></div>
         <div class="mb-4"></div>
-        <ul class="w-full" v-for="track, index in artist.tracks" :key="track">
+        <ul class="w-full" v-for="(track, index) in artist.tracks" :key="track">
             <SongRow :artist="artist" :track="track" :index="++index"/>
         </ul>
     </div>
