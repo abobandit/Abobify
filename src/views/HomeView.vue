@@ -3,6 +3,7 @@
 </script>
 
 <template>
+    <router-view name="navigation"/>
     <div class="p-8">
         <button
             type="button"

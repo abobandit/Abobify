@@ -96,7 +96,7 @@ watch(() => isTrackTimeCurrent.value, (time) => {
             bottom-0
             w-full
             z-50
-            h-[90px]
+            h-[94px]
             bg-[#181818]
             border-t
             border-t-[#272727]

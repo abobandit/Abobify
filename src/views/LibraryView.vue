@@ -8,6 +8,7 @@ import artist from '../artist.json'
 
 import { useSongStore } from '../stores/song'
 import { storeToRefs } from 'pinia';
+import {ref} from "vue";
 const useSong = useSongStore()
 const { isPlaying, currentTrack, currentArtist } = storeToRefs(useSong)
 
@@ -15,9 +16,20 @@ const playFunc = () => {
     if (currentTrack.value) {
         useSong.playOrPauseThisSong(currentArtist.value, currentTrack.value)
         return
-    } 
+    }
     useSong.playFromFirst()
 }
+
+/*
+const album = function (evt){
+  console.log(evt.target.value)
+}
+const makeAlbum = async () => {
+  const response = fetch('spoti/api/admin/albums', {method: 'post', body: new FormData()})
+}
+*/
+
+
 </script>
 
 <template>
@@ -60,7 +72,7 @@ const playFunc = () => {
                         <Pause v-else fillColor="#181818" :size="25"/>
                     </button>
                     <button type="button">
-<!--                        <Heart fillColor="#37D4D7" :size="30"/>-->
+                        <Heart fillColor="#37D4D7" :size="30"/>
                     </button>
                     <button type="button">
                         <DotsHorizontal fillColor="#FFFFFF" :size="25"/>
