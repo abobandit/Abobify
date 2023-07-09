@@ -1,13 +1,12 @@
 import axios from 'axios'
-import {storeToRefs} from "pinia";
-import {useUserStore} from "../stores/user";
 const token = localStorage.getItem('token')
-const instance =  axios.create({
+const adminInstance =  axios.create({
     baseURL: 'http://spoti/api/',
+    method:'delete',
     withCredentials: true,
     headers:{
         Accept:'application/json',
-
+        Authorization: 'Bearer '+ token
     }
 })
-export default instance
+export default adminInstance

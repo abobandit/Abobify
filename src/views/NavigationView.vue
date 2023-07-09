@@ -17,16 +17,16 @@
     >
       <div class="flex items-center ml-6">
         <button type="button" class="rounded-full bg-black p-[1px] cursor-pointer">
-          <ChevronLeft fillColor="#FFFFFF" :size="30"/>
+          <ChevronLeft fillColor="#FFFFFF" @click="$router.go(-1)" :size="30"/>
         </button>
         <button type="button" class="rounded-full bg-black p-[1px] hover:bg-[#] ml-4 cursor-pointer">
-          <ChevronRight fillColor="#FFFFFF" :size="30"/>
+          <ChevronRight fillColor="#FFFFFF" @click="$router.go(1)" :size="30"/>
         </button>
       </div>
       <button @click.stop="openMenu = !openMenu" :class="openMenu ? 'bg-[#282828]' : 'bg-black'"
               class="bg-black hover:bg-[#282828] w-[190px]  rounded-full p-1 mr-8 mt-0.5 cursor-pointer">
-        <div class="flex justify-between w-full">
-          <div class="flex">
+        <div class="flex flex-1 justify-between w-full">
+          <div class=" hidden sm:flex sm:flex-1 ">
             <img
                 class="rounded-full w-[38px] h-[30px] mr-1"
                 src="/public/images/icons/sigmaheadphones.jpg"
@@ -65,7 +65,7 @@
             top-0
             w-[calc(100%-240px)]
             overflow-auto
-            h-full
+            min-h-[100vh]
             bg-gradient-to-b
             from-[#1C1C1C]
             to-black
@@ -104,12 +104,7 @@ const lOut = () => {
   useSong.resetState()
   router.push('/login')
 }
-const createPlaylist = async () => {
-  const response = await instance({
-    method: 'post',
-    url:'playlists'
-  })
-}
+
 const {role,login} = storeToRefs(user)
 
 const currentTrack = storeToRefs(useSong)

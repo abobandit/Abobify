@@ -39,10 +39,15 @@ import router from "../router";
 const user = ref({
   email:'',
   password:'',
+  login:'',
+  first_name:'',
+  last_name:'',
+  img_url:'',
+  role:'',
 })
 const hasError = ref(false)
 const useUser = useUserStore()
-const {isAuth, role, token} = storeToRefs(useUser)
+const {isAuth, role, token,email,login,first_name,last_name,profileImage} = storeToRefs(useUser)
 const logIn = async () =>{
   try{
     const request =  await instance({
@@ -57,14 +62,28 @@ const logIn = async () =>{
         isAuth.value = true
         role.value = request.data.role
         token.value = request.data.token
+        email.value = request.data.user
+        login.value = request.data.user.login
+        first_name.value = request.data.user.first_name
+        last_name.value = request.data.user.last_name
+        profileImage.value = request.data.user.profileImage
+      if (isAuth.value) {
+        localStorage.setItem('token', token.value)
+        localStorage.setItem('user',{
+          email: request.data.user,
+          login: request.data.user.login,
+          first_name: request.data.user.first_name,
+          last_name:request.data.user.last_name,
+          profileImage:request.data.user.profileImage
+        })
+
+        localStorage.setItem('role', role.value)
+        router.push('/home')
+      }
     }else{
       hasError.value = true
     }
-    if (isAuth.value === true) {
-      localStorage.setItem('token', token.value)
-      localStorage.setItem('role', role.value)
-      router.push('/home')
-    }
+
 
   }catch (e){
     hasError.value = true

@@ -15,6 +15,8 @@ import instance from "../api/auth";
 import {useStore} from "../stores";
 import {ref} from "vue";
 import adminGetInstance from "../api/adminGetInstance";
+import AdminUsersPage from "../pages/admin/AdminUsersPage.vue";
+import {useSongStore} from "../stores/song";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +25,7 @@ const router = createRouter({
             path: '/',
             component: NavigationView,
             name: 'navigation',
+            redirect:{name:'home'},
             beforeEnter: async (to, from, next) => {
 
                 const {isAuth} = storeToRefs(useUserStore())
@@ -58,7 +61,19 @@ const router = createRouter({
                 {
                     path: '/playlists/:playlist',
                     name: 'playlist',
-                    component: PlaylistView
+                    component: PlaylistView,
+                    beforeEnter: (to,from) =>{
+                        // console.log('aboab')
+                    }
+                },
+
+                {
+                    path: '/albums/:album',
+                    name: 'album',
+                    component: PlaylistView,
+                    beforeEnter: (to,from) =>{
+                        // console.log('aboab')
+                    }
                 },
             ]
         },
@@ -88,23 +103,9 @@ const router = createRouter({
         },
         {
             path: "/admin",
+            name: 'admin',
             component: MainAdminPage,
             beforeEnter: async (to, from, next) => {
-                /*const {albums, users, tracks, artists, genres, playlists} = storeToRefs(useStore())
-                let cool = ref(false)
-                do {
-                    try{
-                        playlists.value = await adminGetInstance({url: 'playlists'}).data
-                        users.value = await adminGetInstance({url: 'users'}).data
-                        albums.value = await adminGetInstance({url: 'albums'}).data
-                        artists.value = await adminGetInstance({url: 'artists'}).data
-                        genres.value = await adminGetInstance({url: 'genres'}).data
-                        tracks.value = await adminGetInstance({url: 'tracks'}).data
-                        cool.value = true
-                    }catch (e){
-                        cool.value = false
-                    }
-                }while(!cool)*/
                 const {isAuth, role} = storeToRefs(useUserStore())
                 if (!isAuth.value && to.meta.requiresAuth && role !== 'admin') next({name: "home"});
                 else next()
@@ -117,32 +118,32 @@ const router = createRouter({
                 [
                     {
                         path: 'playlists',
-                        component: ControllerAdminPage,
+                        component: AdminUsersPage,
                         name: 'playlists'
                     },
                     {
                         path: 'users',
-                        component: ControllerAdminPage,
-                        name: 'userss'
+                        component: AdminUsersPage,
+                        name: 'users'
                     },
                     {
                         path: 'artists',
-                        component: ControllerAdminPage,
+                        component: AdminUsersPage,
                         name: 'artists'
                     },
                     {
                         path: 'albums',
-                        component: ControllerAdminPage,
+                        component: AdminUsersPage,
                         name: 'albums'
                     },
                     {
                         path: 'genres',
-                        component: ControllerAdminPage,
+                        component: AdminUsersPage,
                         name: 'genres'
                     },
                     {
                         path: 'tracks',
-                        component: ControllerAdminPage,
+                        component: AdminUsersPage,
                         name: 'tracks'
                     },
                 ]
@@ -150,5 +151,17 @@ const router = createRouter({
         }
     ]
 })
-
+router.afterEach(async(to,from)=>{
+    if(to.name === 'playlist' || to.name === 'album'){
+        await useSongStore().onResourceChanging()
+    }
+})
+router.beforeResolve(async (to,from)=>{
+    if(to.name === 'playlist' || to.name === 'album'){
+        const {currentResource,elem} = storeToRefs(useSongStore())
+        currentResource.value = await useSongStore().getAlbum(null,to)
+        console.log(currentResource.value)
+        to.name ==='playlist'? elem.value['type'] = 'Плейлист' : elem.value['type'] = 'Альбом'
+    }
+})
 export default router

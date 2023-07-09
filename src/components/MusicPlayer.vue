@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import MusicPlayerVolume from '../components/MusicPlayerVolume.vue'
 // import Heart from '@/components/Heart'
 import Play from 'vue-material-design-icons/Play.vue';
@@ -7,10 +7,11 @@ import Pause from 'vue-material-design-icons/Pause.vue';
 import SkipBackward from 'vue-material-design-icons/SkipBackward.vue';
 import SkipForward from 'vue-material-design-icons/SkipForward.vue';
 
-import { useSongStore } from '../stores/song'
-import { storeToRefs } from 'pinia';
+import {useSongStore} from '../stores/song'
+import {storeToRefs} from 'pinia';
+
 const useSong = useSongStore()
-const { isPlaying, audio, currentTrack, currentArtist } = storeToRefs(useSong)
+const {isPlaying, audio, currentTrack, currentArtist, backPath} = storeToRefs(useSong)
 
 let isHover = ref(false)
 let isTrackTimeCurrent = ref(null)
@@ -19,59 +20,63 @@ let seeker = ref(null)
 let seekerContainer = ref(null)
 let range = ref(0)
 
-onMounted(() => {
+onMounted( () => {
 
-    if (audio.value) {
-        setTimeout(() => {
+  if (audio.value) {
+    setTimeout(() => {
 
-            timeupdate()
-            loadmetadata()
-        }, 300)
-    }
+     timeupdate()
+      loadmetadata()
+    }, 300)
 
-    if (currentTrack.value) {
-        seeker.value.addEventListener("change", function () {
-            const time = audio.value.duration * (seeker.value.value / 100);
-            audio.value.currentTime = time;
-        });
+  }
 
-        seeker.value.addEventListener("mousedown", function () {
-            audio.value.pause();
-            isPlaying.value = false
-        });
+  if (currentTrack.value) {
+    seeker.value.addEventListener("change", function () {
+      const time = audio.value.duration * (seeker.value.value / 100);
+      audio.value.currentTime = time;
+    });
 
-        seeker.value.addEventListener("mouseup", function () {
-            audio.value.play();
-            isPlaying.value = true
-        });
+    seeker.value.addEventListener("mousedown", function () {
+      audio.value.pause();
+      isPlaying.value = false
+    });
 
-        seekerContainer.value.addEventListener("click", function (e) {
-            const clickPosition = (e.pageX - seekerContainer.value.offsetLeft) / seekerContainer.value.offsetWidth;
-            const time = audio.value.duration * clickPosition;
-            audio.value.currentTime = time;
-            seeker.value.value = (100 / audio.value.duration) * audio.value.currentTime;
-        });
-    }
+    seeker.value.addEventListener("mouseup", function () {
+      audio.value.play();
+      isPlaying.value = true
+    });
+
+    seekerContainer.value.addEventListener("click", function (e) {
+      const clickPosition = (e.pageX - seekerContainer.value.offsetLeft) / seekerContainer.value.offsetWidth;
+      audio.value.currentTime = audio.value.duration * clickPosition;
+      seeker.value = (100 / audio.value.duration) * audio.value.currentTime;
+    });
+  }
 })
+
 function showTime() {
   let minutes = Math.floor(audio.value.currentTime / 60);
   let seconds = Math.floor(audio.value.currentTime - minutes * 60);
-  isTrackTimeCurrent.value = minutes+':'+seconds.toString().padStart(2, '0')
+  isTrackTimeCurrent.value = minutes + ':' + seconds.toString().padStart(2, '0')
   const value = (100 / audio.value.duration) * audio.value.currentTime;
   range.value = value
-  seeker.value.value = value;
+  seeker.value = value;
 }
+
 const timeupdate = () => {
-  audio.value.addEventListener("timeupdate",showTime);
+  audio.value.addEventListener("timeupdate", showTime);
 }
 
 const loadmetadata = () => {
-    audio.value.addEventListener('loadedmetadata', function() {
-        const duration = audio.value.duration;
-        const minutes = Math.floor(duration / 60);
-        const seconds = Math.floor(duration % 60);
-        isTrackTimeTotal.value = minutes+':'+seconds.toString().padStart(2, '0')
+  if (audio.value){
+    audio.value.addEventListener('loadedmetadata', function () {
+      const duration = audio.value.duration;
+      const minutes = Math.floor(duration / 60);
+      const seconds = Math.floor(duration % 60);
+      isTrackTimeTotal.value = minutes + ':' + seconds.toString().padStart(2, '0')
     });
+  }
 }
 watch(() => audio.value, () => {
 
@@ -80,9 +85,9 @@ watch(() => audio.value, () => {
 })
 
 watch(() => isTrackTimeCurrent.value, (time) => {
-    if (time && time == isTrackTimeTotal.value) {
-        useSong.nextSong(currentTrack.value)
-    }
+  if (time && time == isTrackTimeTotal.value) {
+    useSong.nextSong(currentTrack.value)
+  }
 })
 
 </script>
@@ -90,7 +95,7 @@ watch(() => isTrackTimeCurrent.value, (time) => {
 <template>
   <div
       id="MusicPlayer"
-      v-if="audio"
+      v-if="currentTrack"
       class="
             fixed
             bottom-0
@@ -112,7 +117,7 @@ watch(() => isTrackTimeCurrent.value, (time) => {
       >
         <input
             v-model="range"
-            @input="useSong.playOrPauseThisSong(currentArtist, currentTrack)"
+            @input="useSong.playOrPauseThisSong(useSong.getAlbum('artists')[0], currentTrack)"
             ref="seeker"
             type="range"
             class="
@@ -131,22 +136,23 @@ watch(() => isTrackTimeCurrent.value, (time) => {
             :style="`width: ${range}%;`"
             :class="isHover ? 'bg-blue-400' : 'bg-white'"
         />
-        <div class="absolute h-[4px] z-[-0] inset-y-0 left-0 w-full bg-gray-500 rounded-full" />
+        <div class="absolute h-[4px] z-[-0] inset-y-0 left-0 w-full bg-gray-500 rounded-full"/>
 
       </div>
       <div v-if="isTrackTimeTotal" class="text-white text-[12px] pl-2 pt-[11px]">{{ isTrackTimeTotal }}</div>
     </div>
     <div
         class="flex items-center justify-between">
-      <div class="flex items-center w-1/4">
+      <div class="flex items-center w-1/4 flex-1">
         <div class="flex-col items-center justify-center">
           <div class="buttons flex items-center justify-center h-[30px]">
             <button class="mx-2">
               <SkipBackward fillColor="#FFFFFF" :size="25" @click="useSong.prevSong(currentTrack)"/>
             </button>
-            <button class="p-1 rounded-full mx-3 bg-white" @click="useSong.playOrPauseThisSong(currentArtist, currentTrack)">
-              <Play v-if="!isPlaying" fillColor="#181818" :size="25" />
-              <Pause v-else fillColor="#181818" :size="25" />
+            <button class="p-1 rounded-full mx-3 bg-white"
+                    @click="useSong.playOrPauseThisSong(useSong.getAlbum('artists')[0], currentTrack)">
+              <Play v-if="!isPlaying" fillColor="#181818" :size="25"/>
+              <Pause v-else fillColor="#181818" :size="25"/>
             </button>
             <button class="mx-2">
               <SkipForward fillColor="#FFFFFF" :size="25" @click="useSong.nextSong(currentTrack)"/>
@@ -154,31 +160,30 @@ watch(() => isTrackTimeCurrent.value, (time) => {
           </div>
 
 
-
         </div>
-        <div class="flex items-center ml-4">
-          <img class="rounded-sm shadow-2xl" width="55" :src="currentArtist.albumCover">
-          <div class="ml-4">
-            <div class="text-[14px] text-white hover:underline cursor-pointer">
-              {{ currentTrack.name }}
+        <div class="flex items-center ml-4 max-w-fit ">
+          <img v-if="currentTrack" class="rounded-sm shadow-2xl" width="55" :src="backPath + currentTrack.og_image ">
+          <img v-else class="rounded-sm shadow-2xl w-[55px] h-[55px]" src="/images/icons/sigmaheadphones.jpg">
+          <div class="ml-4 flex flex-col ">
+            <div v-if="currentTrack" class="text-[14px] text-white hover:underline cursor-pointer">
+              {{ currentTrack.title }}
             </div>
-            <div class="text-[11px] text-gray-500 hover:underline hover:text-white cursor-pointer">
+            <div v-if="currentArtist" class="text-[11px] text-gray-500 hover:underline hover:text-white cursor-pointer">
               {{ currentArtist.name }}
             </div>
           </div>
         </div>
-        <div class="flex items-center ml-8">
-          <Heart fillColor="#60a6fa" :size="20" />
+        <div class="flex items-center ml-2">
+          <Heart fillColor="#60a6fa" :size="20"/>
 
         </div>
       </div>
 
 
       <div class="flex items-center w-1/4 justify-end pr-10">
-        <MusicPlayerVolume />
+        <MusicPlayerVolume/>
       </div>
     </div>
-
 
 
   </div>
@@ -186,9 +191,9 @@ watch(() => isTrackTimeCurrent.value, (time) => {
 
 <style>
 .rangeDotHidden[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 0;
-    height: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
 }
 </style>

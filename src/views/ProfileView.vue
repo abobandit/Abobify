@@ -38,14 +38,14 @@
   <div class="text-white mb-10">
     <h3 class="text-3xl mb-5">Топ треков этого месяца</h3>
     <ul class="w-full" v-for="(track, index) in recentlyListened()" :key="track">
-      <SongRow :artist="artist" :track="track" :index="++index"/>
+      <SongRow  :track="track" :index="++index"/>
     </ul>
   </div>
   <div class="block w-full text-white">
     <h3 class="text-3xl mb-5">Недавно прослушано</h3>
     <div
         class="flex" >
-      <HomeCard  v-for="track in recentlyListened()" class="w-48 relative " :image="artist.albumCover" :title="track.name" :subTitle="artist.name" >
+      <HomeCard  v-for="track in recentlyListened()" class="w-48 relative " :image="backPath + currentResource.og_image" :title="track.name" :subTitle="artist.name" >
         <button class="p-1 rounded-full bg-white absolute right-6 top-[8.5rem] hidden hover:visible" @click="playFunc()">
           <Play class="" v-if="!isPlaying" fillColor="#181818" :size="25"/>
           <Pause class="inherit" v-else fillColor="#181818" :size="25"/>
@@ -56,7 +56,7 @@
     <h3 class="text-3xl mb-5">Рекомендуем</h3>
     <div
         class="flex" >
-      <HomeCard  v-for="track in recentlyListened()" class="w-48 relative " :image="artist.albumCover" :title="track.name" :subTitle="artist.name" >
+      <HomeCard  v-for="track in recentlyListened()" class="w-48 relative " :image="backPath + currentResource.og_image" :title="track.title" :subTitle="useSong.getArtist().name" >
         <button class="p-1 rounded-full bg-white absolute right-6 top-[8.5rem] hidden hover:visible" @click="playFunc()">
           <Play class="" v-if="!isPlaying" fillColor="#181818" :size="25"/>
           <Pause class="inherit" v-else fillColor="#181818" :size="25"/>
@@ -73,7 +73,7 @@ import {storeToRefs} from "pinia";
 import {ref} from "vue";
 import Play from 'vue-material-design-icons/Play.vue';
 import Pause from 'vue-material-design-icons/Pause.vue';
-import artist from "../artist.json"
+
 import HomeCard from "../components/HomeCard.vue"
 import {useSongStore} from "../stores/song";
 import SongRow from "../components/SongRow.vue"
@@ -84,7 +84,7 @@ const isEditing = ref(false)
 const hasClicked = ref(false)
 
 const useSong = useSongStore()
-const { isPlaying, currentTrack, currentArtist } = storeToRefs(useSong)
+const { isPlaying, currentTrack, currentArtist ,currentResource} = storeToRefs(useSong)
 
 let isHovered = ref(false)
 
@@ -98,7 +98,7 @@ const playFunc = () => {
 const recentlyListened = () => {
   let counter = 0
   let tracks  = []
-  for(let i of artist.tracks){
+  for(let i of currentResource.tracks){
     if(!(counter<5)) return tracks
     tracks.push(i)
     console.log(tracks)

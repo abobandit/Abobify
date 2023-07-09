@@ -4,13 +4,15 @@ import Play from 'vue-material-design-icons/Play.vue';
 import Pause from 'vue-material-design-icons/Pause.vue';
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue';
 import ClockTimeThreeOutline from 'vue-material-design-icons/ClockTimeThreeOutline.vue';
-import artist from '../artist.json'
+
 
 import { useSongStore } from '../stores/song'
 import { storeToRefs } from 'pinia';
-import {ref} from "vue";
+import {onBeforeMount, ref} from "vue";
+import {useStore} from "../stores";
+import instance from "../api/auth";
 const useSong = useSongStore()
-const { isPlaying, currentTrack, currentArtist } = storeToRefs(useSong)
+const { isPlaying, currentTrack, currentArtist,currentResource, backPath } = storeToRefs(useSong)
 
 const playFunc = () => {
     if (currentTrack.value) {
@@ -19,16 +21,50 @@ const playFunc = () => {
     }
     useSong.playFromFirst()
 }
+const {tracks, artists, albums} = storeToRefs(useStore())
 
-/*
-const album = function (evt){
-  console.log(evt.target.value)
-}
-const makeAlbum = async () => {
-  const response = fetch('spoti/api/admin/albums', {method: 'post', body: new FormData()})
-}
-*/
+onBeforeMount(async () => {
+  const {tracks, artists, albums} = storeToRefs(useStore())
 
+  const getArtists = async () => {
+    const response = await instance({
+      method: 'get',
+      url: 'artists',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    })
+    console.log(response.data)
+    return (response.data)
+  }
+  const getAlbums = async () => {
+    const {tracks, artists, albums} = storeToRefs(useStore())
+
+    const response = await instance({
+      method: 'get',
+      url: 'albums',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    })
+    console.log(response.data)
+    return (response.data)
+  }
+  const getSongs = async () => {
+    const response = await instance({
+      method: 'get',
+      url: 'tracks',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    })
+    console.log(response.data)
+    return (response.data)
+  }
+  tracks.value = await getSongs()
+  albums.value = await getAlbums()
+  artists.value = await getArtists()
+})
 
 </script>
 
@@ -38,31 +74,31 @@ const makeAlbum = async () => {
             type="button"
             class="text-white text-2xl font-semibold hover:underline cursor-pointer"
         >
-            {{ artist.name }}
+            {{ currentResource.title }}
         </button>
 
         <div class="py-1.5"></div>
         <div class="flex items-center w-full relative h-full">
-            <img width="140" :src="artist.albumCover">
+            <img width="140" :src="backPath + currentResource.og_image">
 
             <div class="w-full ml-5">
 
                 <div
                     style="font-size: 33px;"
-                    class="text-white absolute w-full hover:underline cursor-pointer top-0 font-bosemiboldld"
+                    class="text-white absolute w-full hover:underline cursor-pointer top-0 font-semibold"
                 >
-                    {{ artist.name }}
+                    {{ currentResource.title }}
                 </div>
 
                 <div class="text-gray-300 text-[13px] flex">
                     <div class="flex">Album</div>
                     <div class="ml-2 flex">
                         <div class="circle mt-2 mr-2" />
-                        <span class="-ml-0.5">{{ artist.releaseYear }}</span>
+<!--                        <span class="-ml-0.5">{{ currentResource.releaseYear }}</span>-->
                     </div>
                     <div class="ml-2 flex">
                         <div class="circle mt-2 mr-2" />
-                        <span class="-ml-0.5">{{ artist.tracks.length }} songs</span>
+                        <span class="-ml-0.5">{{ currentResource.tracks.length }} songs</span>
                     </div>
                 </div>
 
@@ -91,8 +127,8 @@ const makeAlbum = async () => {
         </div>
         <div class="border-b border-b-[#2A2A2A] mt-2"></div>
         <div class="mb-4"></div>
-        <ul class="w-full" v-for="(track, index) in artist.tracks" :key="track">
-            <SongRow :artist="artist" :track="track" :index="++index"/>
+        <ul class="w-full" v-for="(track, index) in currentResource.tracks" :key="track">
+            <SongRow :track="track" :index="++index"/>
         </ul>
     </div>
 </template>
