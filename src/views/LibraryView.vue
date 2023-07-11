@@ -16,8 +16,8 @@ const { isPlaying, currentTrack, currentArtist,currentResource, backPath } = sto
 
 const playFunc = () => {
     if (currentTrack.value) {
-        useSong.playOrPauseThisSong(currentArtist.value, currentTrack.value)
-        return
+        useSong.playOrPauseThisSong(currentArtist.value)
+      return
     }
     useSong.playFromFirst()
 }

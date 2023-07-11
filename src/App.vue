@@ -8,10 +8,11 @@ import {storeToRefs} from "pinia";
 import {useUserStore} from "./stores/user";
 import {useSongStore} from "./stores/song";
 import instance from "./api/auth";
+import {useStore} from "./stores";
 
 document.title ='Aboba'
 
-onBeforeMount( ()=>{
+onBeforeMount(  ()=>{
   if (localStorage.getItem('token')){
     const {token,isAuth,role} = storeToRefs(useUserStore())
     token.value = localStorage.getItem('token')
@@ -33,6 +34,7 @@ onBeforeMount( ()=>{
   }
 
 })
+
 onMounted(()=>{
   const {isPlaying} = storeToRefs(useSongStore())
   isPlaying.value = false

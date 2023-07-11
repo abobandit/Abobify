@@ -8,30 +8,46 @@ import ClockTimeThreeOutline from 'vue-material-design-icons/ClockTimeThreeOutli
 import {useSongStore} from '../stores/song'
 import {storeToRefs} from 'pinia';
 import {useStore} from "../stores";
-import {toRefs} from "vue";
-import router from "../router";
 import instance from "../api/auth";
+import {reactive, ref} from "vue";
+import router from "../router";
+const curRoute = reactive(router.currentRoute.value)
+const isEditing = ref(false)
+const deletePlaylist = async () => {
+  console.log(curRoute  )
+  const response = await instance({
+    url: curRoute.fullPath.substring(1),
+    method:'delete',
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token')
+    }
+  })
 
+  currentInstance.value = {}
+  router.push('/home')
+  console.log(response.data)
+}
 const useSong = useSongStore()
-
-const props = defineProps({
-  image: String
-})
-const {image} = toRefs(props)
-const {isPlaying, currentTrack, currentArtist, currentResource,elem,queue} = storeToRefs(useSong)
+const {isPlaying,currentInstance, currentTrack, currentResource,elem,queue} = storeToRefs(useSong)
 const {tracks, artists, albums} = storeToRefs(useStore())
 
-const playFunc =  () => {
-  if (currentTrack.value) {
-    try{
-      useSong.playOrPauseThisSong(currentArtist.value, currentResource.tracks[0])
-      return
-    }catch (e) {
-      console.log(e)
+const playFunc =  async() => {
+  if (queue.value.length) {
+    isPlaying.value = false
+    if (currentTrack.value
+        && queue.value === currentResource.value.tracks) {
+      try {
+        await useSong.playOrPauseThisSong(currentTrack.value)
+        return
+      } catch (e) {
+        console.log(e)
+      }
+
     }
 
+    queue.value = currentResource.value.tracks
+    await useSong.playFromFirst()
   }
-  useSong.playFromFirst()
 }
 
 /*onUpdated(async ()=>{
@@ -74,18 +90,19 @@ const test = (str)=>{
   <div class="bg-[#101010]">
     <div class="p-8 overflow-x-hidden">
       <button
+          v-if="curRoute.name=== 'album'"
           type="button"
-          v-if="currentResource"
           class="text-white text-2xl font-semibold hover:underline cursor-pointer"
       >
 
-        {{ currentResource.title }}
+        {{ currentInstance?.artists[0].name }}
       </button>
 
       <div class="py-1.5"></div>
       <div class="flex items-center w-full relative h-full">
 
-          <img v-if="currentResource"  class="text-white w-[140px] h-[140px]" :src="elem['path']" alt="Cover">
+          <img v-if="currentInstance?.tracks?.length"  class="text-white w-[140px] h-[140px]" :src="elem['path']" alt="Cover">
+          <img v-else  class="text-white w-[140px] h-[140px]" src="/public/images/icons/sigmaheadphones.jpg" alt="Cover">
 
 
 <!--        <img v-else class="w-[140px] h-[140px]" src="/images/icons/sigmaheadphones.jpg" alt="Cover">-->
@@ -93,11 +110,10 @@ const test = (str)=>{
         <div class="w-full ml-5">
 
           <div
-              v-if="currentResource"
               style="font-size: 33px;"
               class="text-white absolute w-full hover:underline cursor-pointer top-0 font-bosemiboldld"
           >
-            {{ currentResource.title }}
+            {{ currentInstance.title }}
           </div>
 
           <div class="text-gray-300 text-[13px] flex">
@@ -108,20 +124,26 @@ const test = (str)=>{
             </div>-->
             <div class="ml-2 flex">
               <div class="circle mt-2 mr-2"/>
-              <span v-if="currentResource" class="-ml-0.5">{{ currentResource.tracks.length }} songs</span>
+              <span v-if="currentInstance?.tracks?.length" class="-ml-0.5">{{ currentInstance.tracks.length }} songs</span>
             </div>
           </div>
 
           <div class="absolute flex gap-4 items-center justify-start bottom-0 mb-1.5">
             <button class="p-1 rounded-full bg-white" @click="playFunc()">
-              <Play v-if="!isPlaying" fillColor="#181818" :size="25"/>
+              <Play v-if="!isPlaying || !(currentResource === currentInstance)" fillColor="#181818" :size="25"/>
               <Pause v-else fillColor="#181818" :size="25"/>
             </button>
-            <button type="button">
-              <Heart fillColor="#37D4D7" :size="30"/>
-            </button>
-            <button type="button">
-              <DotsHorizontal fillColor="#FFFFFF" :size="25"/>
+            <button v-if=" router.currentRoute.value.name === 'playlist'" type="button">
+              <DotsHorizontal class="relative" @click="isEditing = !isEditing" fillColor="#FFFFFF" :size="25"/>
+              <div v-if="isEditing"
+                   class="absolute w-[190px] bg-[#282828] shadow-2xl z-50 rounded-sm  p-1 cursor-pointer">
+                <ul class="text-gray-200 font-semibold text-[14px]">
+                  <li @click="deletePlaylist()"
+                      class="px-3 py-2.5 hover:bg-[#3E3D3D] border-b border-b-gray-600">
+                    Удалить плейлист
+                  </li>
+                </ul>
+              </div>
             </button>
           </div>
         </div>
@@ -139,8 +161,8 @@ const test = (str)=>{
       </div>
       <div class="border-b border-b-[#2A2A2A] mt-2"></div>
       <div class="mb-4"></div>
-      <template v-if="currentResource">
-        <ul class="w-full" v-for="(track, index) in currentResource.tracks" :key="track">
+      <template v-if="currentInstance">
+        <ul class="w-full" v-for="(track, index) in currentInstance.tracks" :key="track">
           <!--        <SongRow :currentResource="currentResource" :track="track" :index="++index"/>-->
           <SongRow :track="track" :index="++index"/>
         </ul>

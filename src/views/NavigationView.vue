@@ -93,7 +93,6 @@ import {useUserStore} from "../stores/user";
 import {useSongStore} from '../stores/song'
 import {ref} from 'vue'
 import router from "../router";
-import instance from "../api/auth";
 
 import {storeToRefs} from 'pinia';
 const useSong = useSongStore()

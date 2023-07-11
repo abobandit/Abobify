@@ -11,20 +11,24 @@
       <RouterLink to="/search">
         <MenuItem class="ml-[1px]" :iconSize="24" name="" iconString="search" pageUrl="/search"/>
       </RouterLink>
-      <RouterLink to="/library">
+<!--      <RouterLink to="/library">-->
         <MenuItem class="ml-[2px]" :iconSize="23" name="Твоя медиатека" iconString="library" pageUrl="/library"/>
-      </RouterLink>
+<!--      </RouterLink>-->
       <div class="py-3.5"></div>
       <MenuItem :iconSize="24" @click="createPlaylist()" name="Создать плейлист" iconString="playlist"
                 pageUrl="/playlist"/>
-      <router-link :to="'/playlists/likedSongs'">
+<!--      <router-link :to="'/playlists/likedSongs'">-->
         <MenuItem class="-ml-[1px]" :iconSize="27" name="Понравившееся" iconString="liked" pageUrl="/liked"/>
-      </router-link>
+<!--      </router-link>-->
     </ul>
-    <div class="border-b border-b-gray-700"></div>
+    <div class="border-b border-b-gray-700 text-gray-200"></div>
     <template v-if="playlists">
-      <ul class="text-gray-200" v-for="playlist in playlists">
-        <playlist-item :title="playlist.title" @click="goToPlaylist(playlist)"/>
+      <ul class=" h-[14rem]  overflow-y-scroll" >
+        <playlist-item v-for="playlist in playlists"
+                       :title="playlist.title"
+                       @click="goToPlaylist(playlist)"
+                       :pageUrl="`/playlists/${playlist.id}`"
+        />
       </ul>
     </template>
 
@@ -45,7 +49,7 @@ import {useUserStore} from "../stores/user";
 import router from "../router";
 import {useSongStore} from "../stores/song";
 
-
+const {currentInstance} = storeToRefs(useSongStore())
 const goToPlaylist = async (passedPlaylist) => {
   await router.push({
     name: 'playlist',
@@ -71,6 +75,19 @@ const createPlaylist = async () => {
     console.log('Не получилось создать плейлист')
   }
 }
+useSongStore().$subscribe(async () => {
+  if (!Object.keys(currentInstance.value).length){
+    const response = await instance({
+      url: 'playlists',
+      method: 'get',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    })
+    console.log(response.data)
+    return response.data
+  }
+  },currentInstance.value)
 onBeforeMount(async () => {
   const {isAuth} = storeToRefs(useUserStore())
   const {playlists} = storeToRefs(useStore())

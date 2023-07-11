@@ -1,5 +1,4 @@
 <template>
-    <RouterLink to="library">
         <div
             v-if="randColor.color"
             :style="`background-color: ${randColor.color};`"
@@ -10,6 +9,8 @@
                 aspect-square 
                 relative 
                 overflow-hidden
+                hover:saturate-150
+                hover:cursor-pointer
             "
         >
             <div class="text-white pt-3 pl-4 font-semibold text-[23px]">{{ category }}</div>
@@ -22,10 +23,9 @@
                     max-w-[100px] 
                     rotate-[20deg]
                 "
-                :src="image || ''"
+                :src="image.substring(-9) === 'undefined'? '/images' : image"
             >
         </div>
-    </RouterLink>
 </template>
 
 <script setup>

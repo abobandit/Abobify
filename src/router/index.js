@@ -47,11 +47,11 @@ const router = createRouter({
                     name: 'search',
                     component: SearchView
                 },
-                {
+                /*{
                     path: '/library',
                     name: 'library',
                     component: LibraryView
-                },
+                },*/
                 {
                     path: '/profile',
                     name: 'profile',
@@ -152,15 +152,18 @@ const router = createRouter({
     ]
 })
 router.afterEach(async(to,from)=>{
-    if(to.name === 'playlist' || to.name === 'album'){
+    if(to.name === 'playlist' || to.name === 'album' || to.name === 'songs'){
+        console.log('resourceChanging')
         await useSongStore().onResourceChanging()
     }
 })
 router.beforeResolve(async (to,from)=>{
-    if(to.name === 'playlist' || to.name === 'album'){
-        const {currentResource,elem} = storeToRefs(useSongStore())
-        currentResource.value = await useSongStore().getAlbum(null,to)
-        console.log(currentResource.value)
+    const {currentInstance,elem} = storeToRefs(useSongStore())
+    if(to.name === 'playlist' || to.name === 'album' || to.name === 'songs'){
+        // console.log(await useSongStore().getAlbum(null,to))
+        currentInstance.value = await useSongStore().getAlbum(to)
+        console.log('currentInstance')
+        console.log(currentInstance.value)
         to.name ==='playlist'? elem.value['type'] = 'Плейлист' : elem.value['type'] = 'Альбом'
     }
 })

@@ -11,7 +11,7 @@ import {useSongStore} from '../stores/song'
 import {storeToRefs} from 'pinia';
 
 const useSong = useSongStore()
-const {isPlaying, audio, currentTrack, currentArtist, backPath} = storeToRefs(useSong)
+const {isPlaying, audio,elem, currentTrack,currentResource, currentArtist, backPath} = storeToRefs(useSong)
 
 let isHover = ref(false)
 let isTrackTimeCurrent = ref(null)
@@ -117,7 +117,7 @@ watch(() => isTrackTimeCurrent.value, (time) => {
       >
         <input
             v-model="range"
-            @input="useSong.playOrPauseThisSong(useSong.getAlbum('artists')[0], currentTrack)"
+            @input="useSong.playOrPauseThisSong(currentTrack)"
             ref="seeker"
             type="range"
             class="
@@ -149,8 +149,13 @@ watch(() => isTrackTimeCurrent.value, (time) => {
             <button class="mx-2">
               <SkipBackward fillColor="#FFFFFF" :size="25" @click="useSong.prevSong(currentTrack)"/>
             </button>
-            <button class="p-1 rounded-full mx-3 bg-white"
-                    @click="useSong.playOrPauseThisSong(useSong.getAlbum('artists')[0], currentTrack)">
+<!--            <button v-if="currentResource.artists?.length" class="p-1 rounded-full mx-3 bg-white"
+                    @click="useSong.playOrPauseThisSong(currentResource.artists[0])">
+              <Play v-if="!isPlaying" fillColor="#181818" :size="25"/>
+              <Pause v-else fillColor="#181818" :size="25"/>
+            </button>-->
+            <button  class="p-1 rounded-full mx-3 bg-white"
+                    @click="useSong.playOrPauseThisSong(currentTrack)">
               <Play v-if="!isPlaying" fillColor="#181818" :size="25"/>
               <Pause v-else fillColor="#181818" :size="25"/>
             </button>
@@ -162,7 +167,7 @@ watch(() => isTrackTimeCurrent.value, (time) => {
 
         </div>
         <div class="flex items-center ml-4 max-w-fit ">
-          <img v-if="currentTrack" class="rounded-sm shadow-2xl" width="55" :src="backPath + currentTrack.og_image ">
+          <img v-if="elem['path'].length" class="rounded-sm shadow-2xl" width="55" :src="elem['path']">
           <img v-else class="rounded-sm shadow-2xl w-[55px] h-[55px]" src="/images/icons/sigmaheadphones.jpg">
           <div class="ml-4 flex flex-col ">
             <div v-if="currentTrack" class="text-[14px] text-white hover:underline cursor-pointer">

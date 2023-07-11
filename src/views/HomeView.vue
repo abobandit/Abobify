@@ -13,38 +13,7 @@ const {albums, genres} = storeToRefs(useStore())
 /*const findGenre = (gName) =>{
     return genres.value.filter(item => item.name === gName)
 }*/
-const selectAlbum = async (id) => {
-  await router.push({
-    name: 'album',
-    params: {
-      album: id
-    }
-  })
-}
-const getAlbumsByGenre = (genre) => {
-  const arr = ref([])
-  for (let idx in albums.value) {
-    if (albums.value[idx]['genre'] === genre) {
-      arr.value.push(albums.value[idx])
-    }
-  }
-
-  return arr.value
-}
-const getSeveralAlbums = (quantity, sort = false) => {
-  return sort ? albums.value.sort().slice(0, quantity) : albums.value.slice(0, quantity)
-}
-const test = (str) => {
-  console.log(str)
-}
-const getAlbumArtists = (album) => {
-  let string = ''
-  for (let i in album.artists) {
-    string += album.artists[i].name + ' '
-  }
-  return string
-}
-onBeforeMount(async () => {
+onMounted(async () => {
   const {tracks, artists, albums, genres} = storeToRefs(useStore())
   const getArtists = async () => {
     const response = await instance({
@@ -94,7 +63,40 @@ onBeforeMount(async () => {
   // tracks.value = await getSongs()
   albums.value = await getAlbums()
   artists.value = await getArtists()
+
 })
+const selectAlbum = async (id) => {
+  await router.push({
+    name: 'album',
+    params: {
+      album: id
+    }
+  })
+}
+const getAlbumsByGenre = (genre) => {
+  const arr = ref([])
+  for (let idx in albums.value) {
+    if (albums.value[idx]['genre'] === genre) {
+      arr.value.push(albums.value[idx])
+    }
+  }
+
+  return arr.value
+}
+const getSeveralAlbums = (quantity, sort = false) => {
+  return sort ? albums.value.sort().slice(0, quantity) : albums.value.slice(0, quantity)
+}
+const test = (str) => {
+  console.log(str)
+}
+const getAlbumArtists = (album) => {
+  let string = ''
+  for (let i in album.artists) {
+    string += album.artists[i].name + ' '
+  }
+  return string
+}
+
 </script>
 
 <template>
@@ -108,12 +110,12 @@ onBeforeMount(async () => {
     </button>
 
     <div class="py-1.5 "></div>
-    <div class="flex items-center">
-      <HomeCard @click="selectAlbum(album.id)" v-for="(album,idx) of getAlbumsByGenre(`Rock'n'roll`)" :class="{
-              'md:block hidden': idx===2,
-              'lg:block hidden': idx===3,
-              'xl:block hidden': idx===4,
-            }" :image="backPath+album.og_image"  :title="album.title" :subTitle="getAlbumArtists(album)"/>
+    <div class="flex flex-1 items-center w-full overflow-x-auto">
+      <HomeCard @click="selectAlbum(album.id)"
+                v-for="(album,idx) of getAlbumsByGenre(`Rock'n'roll`)"
+                :image="backPath+album.og_image"
+                :title="album.title"
+                :subTitle="getAlbumArtists(album)"/>
     </div>
   </div>
 
@@ -127,12 +129,12 @@ onBeforeMount(async () => {
 
     <div class="py-1.5"></div>
 
-    <div class="flex items-center">
-      <HomeCard @click="selectAlbum(album.id)" v-for="(album,idx) of getSeveralAlbums(5,true)" :class="{
-              'md:block hidden': idx===2,
-              'lg:block hidden': idx===3,
-              'xl:block hidden': idx===4,
-            }" :image="backPath+album.og_image"  :title="album.title" :subTitle="getAlbumArtists(album)"/>
+    <div class="flex items-center w-full overflow-x-auto">
+      <HomeCard @click="selectAlbum(album.id)"
+                v-for="(album,idx) of getSeveralAlbums(5,true)"
+                :image="backPath+album.og_image"
+                :title="album.title"
+                :subTitle="getAlbumArtists(album)"/>
     </div>
   </div>
 
@@ -146,12 +148,12 @@ onBeforeMount(async () => {
 
     <div class="py-1.5"></div>
 
-    <div class="flex items-center">
-      <HomeCard @click="selectAlbum(album.id)" v-for="(album,idx) of getSeveralAlbums(5)" :class="{
-              'md:block hidden': idx===2,
-              'lg:block hidden': idx===3,
-              'xl:block hidden': idx===4,
-            }" :image="backPath+album.og_image"  :title="album.title" :subTitle="getAlbumArtists(album)"/>
+    <div class="flex items-center w-full overflow-x-auto">
+      <HomeCard @click="selectAlbum(album.id)"
+                v-for="(album,idx) of getSeveralAlbums(5)"
+                :image="backPath+album.og_image"
+                :title="album.title"
+                :subTitle="getAlbumArtists(album)"/>
     </div>
   </div>
 </template>
