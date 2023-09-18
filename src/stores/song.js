@@ -4,7 +4,8 @@ import router from "../router";
 
 export const useSongStore = defineStore('song', {
     state: () => ({
-        backPath: 'http://spoti/storage/',
+        // backPath: 'http://spotiback/public/storage/',
+        backPath: 'http://spotiback/public/storage/',
         isPlaying: false,
         audio: null,
         currentArtist: null,
@@ -30,10 +31,7 @@ export const useSongStore = defineStore('song', {
                     const frstTrack = this.currentInstance.tracks
                     if (frstTrack.length){
                         resourcePath = (await instance({
-                            url: `albums/${frstTrack[0].album_id}`,
-                            headers: {
-                                Authorization: 'Bearer ' + localStorage.getItem('token')
-                            }
+                            url: `albums/${frstTrack[0].album_id}`
                         })).data.og_image
                         this.elem['path'] = this.backPath + await resourcePath
 
@@ -50,10 +48,7 @@ export const useSongStore = defineStore('song', {
             try {
                 console.log('Получаем альбом или плейлист' +to.path.substring(1))
                 const response = await instance({
-                    url: to.path.substring(1),
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
+                    url: to.path.substring(1)
                 })
                 console.log('response.data')
                 console.log(response.data)
@@ -78,9 +73,7 @@ export const useSongStore = defineStore('song', {
             try {
                 console.log('Получаем исполнителя')
                 const response = await instance({
-                    url: `albums/${this.currentResource.tracks[0].album_id}`, headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
+                    url: `albums/${this.currentResource.tracks[0].album_id}`
                 })
                 console.log(response.data)
                 console.log('Выше был респонс')

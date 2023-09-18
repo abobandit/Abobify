@@ -1,7 +1,7 @@
 import axios from 'axios'
-const token = localStorage.getItem('token')
+const token = JSON.parse(localStorage.getItem('user')).userData.token
 const adminGetInstance =  axios.create({
-    baseURL: 'http://spoti/api/admin/',
+    baseURL: 'http://spotiback/api/admin/',
     withCredentials: true,
     method:'get',
     headers:{

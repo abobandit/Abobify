@@ -29,10 +29,7 @@ onBeforeMount(async () => {
   const getArtists = async () => {
     const response = await instance({
       method: 'get',
-      url: 'artists',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+      url: 'artists'
     })
     console.log(response.data)
     return (response.data)
@@ -42,10 +39,7 @@ onBeforeMount(async () => {
 
     const response = await instance({
       method: 'get',
-      url: 'albums',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+      url: 'albums'
     })
     console.log(response.data)
     return (response.data)
@@ -53,10 +47,7 @@ onBeforeMount(async () => {
   const getSongs = async () => {
     const response = await instance({
       method: 'get',
-      url: 'tracks',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+      url: 'tracks'
     })
     console.log(response.data)
     return (response.data)

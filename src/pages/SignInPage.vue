@@ -14,21 +14,16 @@
       <h2 class="text-center  mb-5">Регистрация</h2>
       <form @input="hasError=false" class="flex flex-col items-center relative" @submit.prevent>
         <span class="text-red-600 text-[.8rem] absolute top-[-1rem]"  v-show="hasError">Ошибка при заполнении данных</span>
-        <input v-model="user.email"
-               class="w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
-               placeholder="Введите вашу почту" type="email">
-        <input v-model="user.login"
-               class="w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
-               placeholder="Как нам вас называть?" type="text">
-        <input v-model="user.first_name"
-               class="w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
-               placeholder="Введите ваше имя" type="text">
-        <input v-model="user.last_name"
-               class="w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
-               placeholder="Введите ваше фамилию" type="text">
-        <input v-model="user.password"
-               class="w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
-               placeholder="Введите ваш пароль" type="password">
+        <InputUi v-model="user.email"
+               placeholder="Введите вашу почту" type="email"/>
+        <InputUi v-model="user.login"
+               placeholder="Как нам вас называть?"/>
+        <InputUi v-model="user.first_name"
+               placeholder="Введите ваше имя"/>
+        <InputUi v-model="user.last_name"
+               placeholder="Введите вашу фамилию"/>
+        <InputUi v-model="user.password"
+               placeholder="Введите ваш пароль" type="password"/>
         <input @click.prevent="signingin()"
                class="justify-self-center w-min px-1 py-0.5 rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5 bg-white "
                value="Отправить"

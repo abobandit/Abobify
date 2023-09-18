@@ -15,10 +15,7 @@
 
       const response = await instance({
         method: 'get',
-        url: 'albums',
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
+        url: 'albums'
       })
       console.log(response.data)
       return (response.data)
@@ -34,7 +31,7 @@
 </script>
 
 <template>
-    <div class="p-8">
+    <div class="p-8 ">
         <button
             type="button"
             class="text-white text-2xl font-semibold hover:underline cursor-pointer"

@@ -20,7 +20,7 @@
                     contrast-[0.55]
                     -right-3.5 
                     bottom-0 
-                    max-w-[100px] 
+                    max-w-[60%]
                     rotate-[20deg]
                 "
                 :src="image.substring(-9) === 'undefined'? '/images' : image"

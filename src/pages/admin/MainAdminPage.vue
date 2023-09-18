@@ -225,11 +225,7 @@ const controllerArray = [
     getter: async () => {
       try {
         const response = await instance({
-          url: 'playlists',
-          headers: {
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token')
-          }
+          url: 'playlists'
         })
         return await response.data
       } catch (e) {

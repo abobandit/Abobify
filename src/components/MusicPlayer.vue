@@ -11,7 +11,7 @@ import {useSongStore} from '../stores/song'
 import {storeToRefs} from 'pinia';
 
 const useSong = useSongStore()
-const {isPlaying, audio,elem, currentTrack,currentResource, currentArtist, backPath} = storeToRefs(useSong)
+const {isPlaying, audio,elem, currentTrack,currentResource, currentArtist} = storeToRefs(useSong)
 
 let isHover = ref(false)
 let isTrackTimeCurrent = ref(null)

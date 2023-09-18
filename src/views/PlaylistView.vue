@@ -9,22 +9,20 @@ import {useSongStore} from '../stores/song'
 import {storeToRefs} from 'pinia';
 import {useStore} from "../stores";
 import instance from "../api/auth";
-import {reactive, ref} from "vue";
+import {computed, onBeforeMount, reactive, ref} from "vue";
 import router from "../router";
-const curRoute = reactive(router.currentRoute.value)
+
+const curRoute = computed(()=> router.currentRoute.value )
 const isEditing = ref(false)
 const deletePlaylist = async () => {
   console.log(curRoute  )
   const response = await instance({
     url: curRoute.fullPath.substring(1),
-    method:'delete',
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token')
-    }
+    method:'delete'
   })
 
   currentInstance.value = {}
-  router.push('/home')
+  await router.push('/home')
   console.log(response.data)
 }
 const useSong = useSongStore()
@@ -58,7 +56,7 @@ const playFunc =  async() => {
   // Если имя маршрута Альбом то ссылка на картинку берется из значения ресурса, в противном случае из дебрей
   if(router.currentRoute.value.name === 'album') {
     resourcePath = await currentResource.value.og_image
-    elem.value['path'] = backPath.value +  await resourcePath
+    elem.value['path'] = backPathToStorage.value +  await resourcePath
   }else {
     try{
       resourcePath = (await instance({
@@ -66,7 +64,7 @@ const playFunc =  async() => {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token')
         }})).data.og_image
-      elem.value['path'] = backPath.value +  await resourcePath
+      elem.value['path'] = backPathToStorage.value +  await resourcePath
     } catch {
         elem.value['path']  = false
     }
@@ -87,26 +85,19 @@ const test = (str)=>{
 </script>
 
 <template>
-  <div class="bg-[#101010]">
-    <div class="p-8 overflow-x-hidden">
+  <div class="bg-[#101010]" v-if="curRoute">
+    <div class="p-8 overflow-x-hidden" v-if="currentInstance">
       <button
-          v-if="curRoute.name=== 'album'"
+          v-if="curRoute.name=== 'album' && currentInstance.artists !== undefined"
           type="button"
           class="text-white text-2xl font-semibold hover:underline cursor-pointer"
       >
-
         {{ currentInstance?.artists[0].name }}
       </button>
-
       <div class="py-1.5"></div>
       <div class="flex items-center w-full relative h-full">
-
-          <img v-if="currentInstance?.tracks?.length"  class="text-white w-[140px] h-[140px]" :src="elem['path']" alt="Cover">
+          <img v-if="currentInstance?.tracks?.length || curRoute.name==='album'"  class="text-white w-[140px] h-[140px]" :src="elem['path']" alt="Cover">
           <img v-else  class="text-white w-[140px] h-[140px]" src="/public/images/icons/sigmaheadphones.jpg" alt="Cover">
-
-
-<!--        <img v-else class="w-[140px] h-[140px]" src="/images/icons/sigmaheadphones.jpg" alt="Cover">-->
-
         <div class="w-full ml-5">
 
           <div
@@ -118,10 +109,6 @@ const test = (str)=>{
 
           <div class="text-gray-300 text-[13px] flex">
             <div class="flex">{{ elem.type }}</div>
-<!--            <div v-if="currentResource.releaseYear" class="ml-2 flex">
-              <div class="circle mt-2 mr-2"/>
-              <span class="-ml-0.5">{{ currentResource.releaseYear }}</span>
-            </div>-->
             <div class="ml-2 flex">
               <div class="circle mt-2 mr-2"/>
               <span v-if="currentInstance?.tracks?.length" class="-ml-0.5">{{ currentInstance.tracks.length }} songs</span>

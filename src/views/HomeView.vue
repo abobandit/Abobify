@@ -9,18 +9,21 @@ import router from "../router";
 
 let useSong = useSongStore();
 const {backPath} = storeToRefs(useSong)
+
 const {albums, genres} = storeToRefs(useStore())
 /*const findGenre = (gName) =>{
     return genres.value.filter(item => item.name === gName)
 }*/
 onMounted(async () => {
   const {tracks, artists, albums, genres} = storeToRefs(useStore())
+  const token = JSON.parse(localStorage.getItem('user')).userData.token
+  console.log(backPath.value)
   const getArtists = async () => {
     const response = await instance({
       method: 'get',
       url: 'artists',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
+        Authorization: 'Bearer ' + token
       }
     })
     console.log(response.data)
@@ -43,7 +46,7 @@ onMounted(async () => {
       method: 'get',
       url: 'albums',
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
+        Authorization: 'Bearer ' + token
       }
     })
     console.log(response.data)
@@ -83,6 +86,7 @@ const getAlbumsByGenre = (genre) => {
 
   return arr.value
 }
+
 const getSeveralAlbums = (quantity, sort = false) => {
   return sort ? albums.value.sort().slice(0, quantity) : albums.value.slice(0, quantity)
 }
@@ -150,7 +154,7 @@ const getAlbumArtists = (album) => {
 
     <div class="flex items-center w-full overflow-x-auto">
       <HomeCard @click="selectAlbum(album.id)"
-                v-for="(album,idx) of getSeveralAlbums(5)"
+                v-for="(album,idx) of getAlbumsByGenre('Hard Rock')"
                 :image="backPath+album.og_image"
                 :title="album.title"
                 :subTitle="getAlbumArtists(album)"/>

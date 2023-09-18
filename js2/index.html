@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ABOBA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="border">Без рамки</div>
+<div class="blueRound">
+    кругление
+</div>
+<div class="pish">
+    ПЫЩ
+</div>
+<div class="a">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+</div>
+<div id="pwc">
+    <ul class="cat">
+        <li>aboba</li>
+        <li>aboba</li>
+    </ul>
+    <input class="plus" type="button" value="+">
+    <input class="minus" type="button" value="-">
+</div>
+<div class="off">
+    Выкл
+</div>
+
+<div class="random_place off">
+    RANDOM PLACE
+</div>
+<input class="paintYellow" value="Покрасить в желтый" type="button">
+<input class="do_kawaika" value="сделать сайт кавайкой" type="button">
+<div class="rand_container">
+    <input type="button" value="Добавь" class="addDivs">
+</div>
+
+<script defer>
+    let hasChanged = false
+    const plusButton = document.querySelector('.plus')
+    const switcher = document.querySelector('.off')
+    const minusButton = document.querySelector('.minus')
+    const paintButton = document.querySelector('.paintYellow')
+    const randomDiv = document.querySelector('.random_place')
+    const doKawaikaButton = document.querySelector('.do_kawaika')
+    const addDivsButton = document.querySelector('.addDivs')
+    const assignClass = (selector, newClass, revert = false) => {
+        const selected = document.querySelector(selector)
+        selected.addEventListener('click', () => {
+            hasChanged = !hasChanged
+            if (selected.className.indexOf(newClass) === -1) selected.className += ' ' + newClass
+            if (revert && !hasChanged) {
+                selected.classList.remove(newClass)
+            }
+        })
+    }
+    const randomValue = (min, max) => Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))
+    const plusElem = (selector) => {
+        const selected = document.querySelector(selector)
+        const li = document.createElement('li')
+        li.innerText = 'кот'
+        selected.insertAdjacentElement("beforeend", li)
+    }
+    const minusElem = (selector) => {
+        const selected = document.querySelector(selector)
+        const lastCh = selected.lastChild
+        if (lastCh.innerText === 'кот') selected.removeChild(lastCh)
+    }
+    assignClass('.border', 'withBorder')
+    assignClass('.blueRound', 'rounded')
+    assignClass('.pish', 'text-lg')
+    assignClass('.a', 'flex', true)
+    assignClass('.off', 'on', true)
+    switcher.addEventListener('click', (event) => {
+        const currentText = event.target.innerText
+        const currentClass = event.target.classList
+        if (currentText === 'Выкл' ?? currentClass[1] === 'on') event.target.innerText = 'Вкл'
+        else event.target.innerText = 'Выкл'
+    })
+    plusButton.addEventListener('click', () => plusElem('.cat'))
+    minusButton.addEventListener('click', () => minusElem('.cat'))
+    randomDiv.addEventListener('click', (event) => {
+        ;
+        const windowWidth = document.body.clientWidth
+        const windowHeight = document.body.clientHeight
+        const maxAllowedX = windowWidth - event.target.offsetWidth
+        const maxAllowedY = windowHeight - event.target.offsetHeight
+        console.log(maxAllowedY)
+        event.target.style.top = randomValue(0, maxAllowedY) + 'px'
+        event.target.style.left = randomValue(0, maxAllowedX) + 'px'
+    })
+    paintButton.addEventListener('click', () => document.body.style.background = 'yellow')
+    doKawaikaButton.addEventListener('click', () => document.title = 'кавайка')
+    addDivsButton.addEventListener('click', () => {
+        const parent = document.querySelector('.rand_container')
+        for (let i = 0; i<3; i++){
+            const newDiv = document.createElement('div')
+            parent.insertAdjacentElement('beforeend', newDiv)
+            const randomDivText = randomValue(1,10)
+            newDiv.style.background = randomDivText<6 ? 'red' : 'yellow'
+            newDiv.innerText = randomDivText.toString()
+            newDiv.style.width= '100px'
+        }
+
+    })
+</script>
+</body>
+</html>

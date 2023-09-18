@@ -36,11 +36,10 @@
           <div v-for="(value,key) of fields">
             <div class="min-w-min">
               <span class="text-wrap ">{{key}} </span>
-              <input v-model="fields[key]"
+              <InputUi v-model="fields[key]"
                      :accept="key==='storage_dir' ? '.mp3' : false"
-                     class="w-min px-1 py-0.5 placeholder:text-[.8rem] rounded-lg outline-none hover:bg-gray-100 focus:border focus:border-black mb-5"
                      :type="key.substring(key.length-2) === 'id'?
-                     'number': key === 'storage_dir' ? 'file' : 'text'">
+                     'number': key === 'storage_dir' ? 'file' : 'text'"/>
             </div>
           </div>
           <input type="button"

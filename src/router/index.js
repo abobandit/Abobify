@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import SearchView from '../views/SearchView.vue'
+import SearchView from '../views/AlbumList.vue'
 import LibraryView from '../views/LibraryView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import SignInPage from "../pages/SignInPage.vue";
@@ -17,6 +17,7 @@ import {ref} from "vue";
 import adminGetInstance from "../api/adminGetInstance";
 import AdminUsersPage from "../pages/admin/AdminUsersPage.vue";
 import {useSongStore} from "../stores/song";
+import TrackController from "@/views/artist/TrackController.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,11 +48,11 @@ const router = createRouter({
                     name: 'search',
                     component: SearchView
                 },
-                /*{
-                    path: '/library',
-                    name: 'library',
-                    component: LibraryView
-                },*/
+                {
+                    path: '/controller',
+                    name: 'Controller',
+                    component: TrackController
+                },
                 {
                     path: '/profile',
                     name: 'profile',

@@ -36,9 +36,6 @@ const likeSong = async () => {
     method: 'post',
     data: {
       track_id: track.value.id
-    },
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token')
     }
   })
   console.log(response.data)
@@ -49,9 +46,6 @@ const removeFromPlaylist = async () => {
     method: 'delete',
     data: {
       track_id: track.value.id
-    },
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token')
     }
   })
   console.log(response.data)

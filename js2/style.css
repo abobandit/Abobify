@@ -1,0 +1,43 @@
+.border, .blueRound, .pish, .cat, .off, .on, .random_place{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.withBorder{
+    border: 1px solid black;
+}
+.random_place{
+    position: absolute;
+    left: 50%;
+}
+.off{
+    background: red;
+}
+.on{
+    background:green;
+}
+.blueRound, .rounded, .pish{
+    background: blue;
+}
+.rounded {
+    border-radius: 5rem;
+}
+.text-lg{
+    font-size: 2rem;
+}
+.flex{
+    display: flex;
+}
+.cat li{
+    counter-increment: count-inc;
+}
+.cat li:nth-child(odd){
+    background: gray;
+}
+.cat li:before{
+    content: counter(count-inc) '.';
+}
+li{
+    list-style: none;
+}

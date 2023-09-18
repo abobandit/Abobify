@@ -1,5 +1,5 @@
 <template>
-  <router-view/>
+    <router-view/>
 </template>
 
 <script setup>
@@ -10,14 +10,15 @@ import {useSongStore} from "./stores/song";
 import instance from "./api/auth";
 import {useStore} from "./stores";
 
-document.title ='Aboba'
 
 onBeforeMount(  ()=>{
-  if (localStorage.getItem('token')){
+  if (localStorage.getItem('user')){
+    const user = localStorage.getItem('user')
     const {token,isAuth,role} = storeToRefs(useUserStore())
-    token.value = localStorage.getItem('token')
+    console.log(JSON.parse(user).userData)
+    /*token.value = localStorage.getItem('token')
     isAuth.value = true
-    role.value = localStorage.getItem('role')
+    role.value = localStorage.getItem('role')*/
     /*const authUser= async () =>{
       try{
         const request = await instance({
@@ -43,6 +44,7 @@ onMounted(()=>{
 </script>
 <style>
 #app{
+  overflow-x: clip;
   min-height: 100vh ;
 }
 body{

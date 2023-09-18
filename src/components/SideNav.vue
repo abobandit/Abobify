@@ -11,10 +11,10 @@
       <RouterLink to="/search">
         <MenuItem class="ml-[1px]" :iconSize="24" name="" iconString="search" pageUrl="/search"/>
       </RouterLink>
-<!--      <RouterLink to="/library">-->
-        <MenuItem class="ml-[2px]" :iconSize="23" name="Твоя медиатека" iconString="library" pageUrl="/library"/>
-<!--      </RouterLink>-->
-      <div class="py-3.5"></div>
+      <RouterLink to="/controller">
+        <MenuItem class="ml-[2px]" :iconSize="23" name="Управление треками" iconString="library" pageUrl="/controller"/>
+      </RouterLink>
+<!--      <div class="py-3.5"></div>-->
       <MenuItem :iconSize="24" @click="createPlaylist()" name="Создать плейлист" iconString="playlist"
                 pageUrl="/playlist"/>
 <!--      <router-link :to="'/playlists/likedSongs'">-->
@@ -22,7 +22,7 @@
 <!--      </router-link>-->
     </ul>
     <div class="border-b border-b-gray-700 text-gray-200"></div>
-    <template v-if="playlists">
+    <template v-if="playlists.length">
       <ul class=" h-[14rem]  overflow-y-scroll" >
         <playlist-item v-for="playlist in playlists"
                        :title="playlist.title"
@@ -63,10 +63,7 @@ const createPlaylist = async () => {
   try {
     const response = await instance({
       method: 'post',
-      url: 'playlists',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+      url: 'playlists'
     })
     console.log(response.data)
     playlists.value.push(response.data)
@@ -79,10 +76,7 @@ useSongStore().$subscribe(async () => {
   if (!Object.keys(currentInstance.value).length){
     const response = await instance({
       url: 'playlists',
-      method: 'get',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+      method: 'get'
     })
     console.log(response.data)
     return response.data
@@ -91,14 +85,10 @@ useSongStore().$subscribe(async () => {
 onBeforeMount(async () => {
   const {isAuth} = storeToRefs(useUserStore())
   const {playlists} = storeToRefs(useStore())
-  console.log(localStorage.getItem('token'))
   const getPlaylists = async () => {
     const response = await instance({
       url: 'playlists',
       method: 'get',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
     })
     console.log(response.data)
     return response.data

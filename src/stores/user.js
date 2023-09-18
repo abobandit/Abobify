@@ -2,13 +2,8 @@ import {defineStore} from "pinia";
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        email: '',
-        login: 'aboba',
-        first_name: '',
-        last_name: '',
-        token: null,
+        userData: {},
         profileImage: null,
-        role: null,
         isAuth: false
     }),
     actions: {

@@ -8,26 +8,21 @@
         <h2 class="text-4xl mb-5">Профиль</h2>
 
         <ul >
-          <li>Ваш логин <span>{{ login }}</span></li>
-          <li>Ваш email <span>{{ email.email }}</span></li>
-          <li>Ваш пароль <span>*****</span></li>
+          <li>Ваш логин <span>{{ userData.login }}</span></li>
+          <li>Ваш email <span>{{ userData.email }}</span></li>
+<!--          <li>Ваш пароль <span>*****</span></li>-->
 
         </ul>
       </div>
       <div v-else class="text-black flex flex-col">
         <h2 class="text-2xl">Редактирование настроек профиля</h2>
-        <input :value="login"
-               class="w-min px-1 py-0.5 bg-white rounded-lg outline-none hover:bg-gray-100  active:bg-gray-200 mb-2"
-               placeholder="Введите ваш новый login" type="text">
-        <input :value="email.email"
-               class="w-min px-1 py-0.5 bg-white rounded-lg outline-none hover:bg-gray-100 focus:bg-white active:bg-gray-200 mb-2"
-               placeholder="Введите ваш новый email" type="email">
+        <InputUi v-model="userData.login"
+               placeholder="Введите ваш новый логин" type="text"/>
+        <InputUi v-model="userData.email"
+               placeholder="Введите ваш новый email" />
         <div class="flex">
-          <input :value="password"
-                 class="w-min px-1 py-0.5 bg-white mr-2 rounded-lg outline-none hover:bg-gray-100 active:bg-gray-200 mb-2"
-                 placeholder="Введите ваш новый password" :type="hasClicked?'text':'password'">
-
-          <!--               @click="hasClicked = !hasClicked" type="button">-->
+<!--        <InputUi v-model="password"
+                 placeholder="Введите ваш новый пароль" :type="hasClicked?'text':'password'"/>-->
         </div>
 
       </div>
@@ -93,7 +88,7 @@ import {useStore} from "../stores";
 import router from "../router";
 
 const useUser = useUserStore()
-const {email, login, password} = storeToRefs(useUser)
+const {userData} = storeToRefs(useUser)
 const isEditing = ref(false)
 const hasClicked = ref(false)
 
@@ -126,10 +121,7 @@ const getAlbums = async () => {
 
   const response = await instance({
     method: 'get',
-    url: 'albums',
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token')
-    }
+    url: 'albums'
   })
   console.log(response.data)
   return (response.data)

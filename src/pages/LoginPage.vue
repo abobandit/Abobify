@@ -36,6 +36,7 @@ import {ref} from "vue";
 import {useUserStore} from "../stores/user";
 import {storeToRefs} from "pinia";
 import router from "../router";
+
 const user = ref({
   email:'',
   password:'',
@@ -47,44 +48,36 @@ const user = ref({
 })
 const hasError = ref(false)
 const useUser = useUserStore()
-const {isAuth, role, token,email,login,first_name,last_name,profileImage} = storeToRefs(useUser)
-const logIn = async () =>{
-  try{
-    const request =  await instance({
-      method:'post',
-      url:'login',
-      data:{
-        email:user.value.email,
-        password:user.value.password
+const loginRequest = async () => {
+  try {
+    return await instance({
+      method: 'post',
+      url: 'login',
+      data: {
+        email: user.value.email,
+        password: user.value.password
       }
     })
+  }catch (e){
+    console.log(e)
+  }
+}
+const {isAuth, token,userData,login,first_name,last_name,profileImage} = storeToRefs(useUser)
+const logIn = async () =>{
+  try {
+    const request = await loginRequest()
     if (request.data.message === 'User Logged in successfully'){
-        isAuth.value = true
-        role.value = request.data.role
-        token.value = request.data.token
-        email.value = request.data.user
-        login.value = request.data.user.login
-        first_name.value = request.data.user.first_name
-        last_name.value = request.data.user.last_name
-        profileImage.value = request.data.user.profileImage
+      isAuth.value = true
+      userData.value = request.data.user
       if (isAuth.value) {
-        localStorage.setItem('token', token.value)
         localStorage.setItem('user',{
-          email: request.data.user,
-          login: request.data.user.login,
-          first_name: request.data.user.first_name,
-          last_name:request.data.user.last_name,
-          profileImage:request.data.user.profileImage
+          userData: request.data.user,
         })
-
-        localStorage.setItem('role', role.value)
         router.push('/home')
+      }else{
+        hasError.value = true
       }
-    }else{
-      hasError.value = true
-    }
-
-
+  }
   }catch (e){
     hasError.value = true
     console.log(e)
